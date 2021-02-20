@@ -79,12 +79,37 @@
 
     <!-- Main Script -->
     <script type="module">
+      function showForm(toggle, two) {
+        const x = document.getElementById("recordForm");
+        const y = document.getElementById("recordIDcontainer");
+        if (toggle) {
+          x.style.display = "block";
+        } else {
+          x.style.display = "none";
+        }
+        if (two) {
+          y.style.display = "block";
+        } else {
+          y.style.display = "none";
+        }
+      }
+
+      function displayOutput(json) {
+        document.getElementById("output").innerText = json;
+      }
+
       // This function should fetch all of the data from the given endpoint.
       // From the 4 CRUD actions, this is the READ action, and uses the GET http method.
       // The main difference from fetchOne() will be the URL you request from; check
       // the writeup to view the URL pattern for fetch one and fetch all
       function fetchAll() {
-        // TODO
+        // GET
+        showForm(false);
+        const endpoint = document.getElementById("endpoint").value;
+
+        fetch(endpoint).then(res => {
+          res.text().then(displayOutput);
+        }).catch(displayOutput);
       }
 
       // This function should fetch one entry from the given endpoint.
@@ -92,23 +117,63 @@
       // The main difference from fetchAll() will be the URL you request from; check
       // the writeup to view the URL pattern for fetch one and fetch all
       function fetchOne() {
-        // TODO
+        // GET /id
+        showForm(false);
+        const endpoint = document.getElementById("endpoint").value;
+        const id = window.prompt("ID?");
+
+        fetch(endpoint+"/"+id).then(res => {
+          res.text().then(displayOutput);
+        }).catch(displayOutput);
       }
 
       // This function should use fetch to create one entry in the given endpoint.
       // From the 4 CRUD actions, this is the CREATE action, and uses the POST http method.
       // The main difference from updateRecord() will be the URL you send data to; check
       // the writeup to view the URL pattern for create and update
-      function createRecord() {
-        // TODO
+      function createRecord(type) {
+        // POST
+        showForm(true);
+        const endpoint = document.getElementById("endpoint").value;
+        const author = document.getElementById("author").value;
+        const title = document.getElementById("title").value;
+
+        if (type == "submit") {
+          fetch(endpoint, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({author: author, title: title})
+          }).then(res => {
+            res.text().then(displayOutput);
+          }).catch(displayOutput);
+        }
       }
 
       // This function should use fetch to update one existing entry in the given endpoint.
       // From the 4 CRUD actions, this is the UPDATE action, and uses the PUT http method.
       // The main difference from createRecord() will be the URL you send data to; check
       // the writeup to view the URL pattern for create and update
-      function updateRecord() {
-        // TODO
+      function updateRecord(type) {
+        // PUT /id
+        showForm(true, true);
+        const endpoint = document.getElementById("endpoint").value;
+        const author = document.getElementById("author").value;
+        const title = document.getElementById("title").value;
+        const recordID = document.getElementById("recordID").value;
+
+        if (type == "submit") {
+          fetch(endpoint+"/"+recordID, {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({author: author, title: title})
+          }).then(res => {
+            res.text().then(displayOutput);
+          }).catch(displayOutput);
+        }
       }
 
       // This function should use fetch to delete one existing entry in the given endpoint.
@@ -117,7 +182,14 @@
       // request; check the writeup to view the URL pattern for get one and delete. THERE IS NO 
       // delete all, only delete one.
       function deleteRecord() {
-        // TODO
+        // DELETE /id
+        showForm(false);
+        const endpoint = document.getElementById("endpoint").value;
+        const id = window.prompt("ID?");
+
+        fetch(endpoint+"/"+id, {method:"delete"}).then(res => {
+          res.text().then(displayOutput);
+        }).catch(displayOutput);
       }
 
       window.addEventListener('DOMContentLoaded', () => {
